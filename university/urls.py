@@ -1,7 +1,10 @@
-from django.urls import path
+from django.urls import path, include
 
-from university.views import HomeView
+from university.views import get_student_list
+
+app_name = 'university'
 
 urlpatterns = [
-    path('', HomeView.as_view(), name='home'),
+    path('api-auth/', include('rest_framework.urls')),
+    path('', get_student_list, name='student-list'),
 ]
