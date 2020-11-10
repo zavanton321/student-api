@@ -1,43 +1,29 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import generics
 
 from university.models import Student
 from university.serializers import StudentSerializer
 
 
-class StudentListView(APIView):
-    def get(self, request):
-        students = Student.objects.all()
-        serializer = StudentSerializer(instance=students, many=True)
-        return Response(data=serializer.data)
+class StudentListView(generics.ListCreateAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
 
-    def post(self, request):
-        serializer = StudentSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
 
-class StudentDetailView(APIView):
-    def get(self, request, pk):
-        student = get_object_or_404(Student, pk=pk)
-        serializer = StudentSerializer(instance=student)
-        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+class StudentDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
 
-    def put(self, request, pk):
-        student = get_object_or_404(Student, pk=pk)
-        serializer = StudentSerializer(instance=student, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
-    def delete(self, request, pk):
-        student = get_object_or_404(Student, pk=pk)
-        student.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return super().delete(request, *args, **kwargs)
