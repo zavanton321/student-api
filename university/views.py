@@ -1,44 +1,43 @@
-from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.parsers import JSONParser
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from university.models import Student
 from university.serializers import StudentSerializer
 
 
-@csrf_exempt
+@api_view(['GET', 'POST'])
 def get_student_list(request):
     if request.method == 'GET':
         students = Student.objects.all()
         serializer = StudentSerializer(instance=students, many=True)
-        return JsonResponse(data=serializer.data, safe=False, status=200)
+        return Response(data=serializer.data)
+
     elif request.method == 'POST':
-        parsed = JSONParser().parse(stream=request)
-        serializer = StudentSerializer(data=parsed)
+        serializer = StudentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(data=serializer.data, status=201)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return JsonResponse(data=serializer.errors, status=400)
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@csrf_exempt
+@api_view(http_method_names=['GET', 'PUT', 'DELETE'])
 def get_student_detail(request, pk):
     if request.method == 'GET':
         student = get_object_or_404(Student, pk=pk)
         serializer = StudentSerializer(instance=student)
-        return JsonResponse(data=serializer.data, status=200)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
     elif request.method == 'PUT':
         student = get_object_or_404(Student, pk=pk)
-        parsed = JSONParser().parse(stream=request)
-        serializer = StudentSerializer(instance=student, data=parsed)
+        serializer = StudentSerializer(instance=student, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(data=serializer.data, status=200)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
-            return JsonResponse(data=serializer.errors, status=400)
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         student = get_object_or_404(Student, pk=pk)
         student.delete()
-        return HttpResponse(status=204)
+        return Response(status=status.HTTP_204_NO_CONTENT)
