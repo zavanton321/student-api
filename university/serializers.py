@@ -13,10 +13,11 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(
         view_name='university:student-detail'
     )
+    rnd = serializers.HyperlinkedIdentityField(view_name='university:student-randnum')
 
     class Meta:
         model = Student
-        fields = ['id', 'url', 'first_name', 'last_name', 'grade', 'random_data', 'registrator']
+        fields = ['id', 'url', 'first_name', 'last_name', 'grade', 'random_data', 'registrator', 'rnd']
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

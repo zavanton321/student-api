@@ -27,7 +27,9 @@ class Student(models.Model):
     )
     random_data = models.CharField(
         max_length=100,
-        verbose_name='Рандомное поле'
+        verbose_name='Рандомное поле',
+        null=True,
+        blank=True
     )
 
     def save(self, *args, **kwargs):
