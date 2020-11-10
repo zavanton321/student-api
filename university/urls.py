@@ -1,32 +1,14 @@
-from django.urls import path
-from rest_framework.urlpatterns import format_suffix_patterns
+from django.urls import path, include
+from rest_framework import routers
 
-from university.views import StudentViewSet, api_root
+from university.views import StudentViewSet, UserViewSet
 
 app_name = 'university'
 
-# router = routers.DefaultRouter()
-# router.register(prefix=r'students', viewset=StudentViewSet)
-
-student_list = StudentViewSet.as_view(
-    {
-        'get': 'list',
-        'post': 'create'
-    }
-)
-
-student_detail = StudentViewSet.as_view(
-    {
-        'put': 'update',
-        'delete': 'destroy',
-        'get': 'retrieve'
-    }
-)
+router = routers.DefaultRouter()
+router.register(prefix=r'students', viewset=StudentViewSet)
+router.register(prefix=r'users', viewset=UserViewSet)
 
 urlpatterns = [
-    path('', api_root),
-    path('students/', student_list, name='student-list'),
-    path('students/<int:pk>', student_detail, name='student-detail'),
+    path('', include(router.urls))
 ]
-
-urlpatterns = format_suffix_patterns(urlpatterns)
